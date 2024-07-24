@@ -3,5 +3,5 @@
 
 ## Setup
 1. [Download/Install bruno](https://www.usebruno.com/downloads)
-2. Import the collection(s) you need from this repository into your bruno client
+2. Import the collection(s) you need from this repository into your bruno client (via 'Open collection' in the UI)
 3. Enjoy!
