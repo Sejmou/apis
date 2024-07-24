@@ -1,0 +1,15 @@
+meta {
+  name: IDs from Chartmetric ID
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api_url}}/artist/chartmetric/{{cm_track_id}}/get-ids?aggregate=true
+  body: none
+  auth: none
+}
+
+query {
+  aggregate: true
+}

@@ -1,0 +1,37 @@
+meta {
+  name: Tracks (batched) with region
+  type: http
+  seq: 6
+}
+
+get {
+  url: https://api.spotify.com/v1/tracks?ids={{track_ids}}?region=DE
+  body: none
+  auth: bearer
+}
+
+query {
+  ids: {{track_ids}}?region
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:pre-request {
+  const ids = [
+    "4uUG5RXrOk84mYEfFvj3cK",
+    "0yLdNVWF3Srea0uzk55zFn",
+    "4h9wh7iOZ0GGn8QVp4RAOB",
+    "0WtM2NBVQNNJLh6scP13H8",
+    "4LRPiXqCikLlN15c3yImP7",
+    "0V3wPSX9ygBnCm8psDIegu",
+    "6BePGk3eCan4FqaW2X8Qy3",
+    "7ef4DlsgrMEH11cDZd32M6",
+    "3BKD1PwArikchz2Zrlp1qi",
+    "3nqQXoyQOWXiESFLlDF1hG",
+  ]
+  
+  const idsQueryParam = ids.join(',')
+  bru.setVar('track_ids', idsQueryParam)
+}

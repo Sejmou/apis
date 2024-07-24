@@ -1,0 +1,15 @@
+meta {
+  name: TikTok Top Video
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/track/{{cm_track_id}}/topVideos?limit=100
+  body: none
+  auth: inherit
+}
+
+query {
+  limit: 100
+}

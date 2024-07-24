@@ -1,0 +1,29 @@
+meta {
+  name: Get Access Token from Refresh Token
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{api_url}}/token
+  body: json
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+body:json {
+  {
+      "refreshtoken": "{{refresh_token}}"
+  }
+}
+
+script:post-response {
+  bru.setEnvVar('access_token', res.body.token)
+}
+
+tests {
+  // pm.collectionVariables.set("access_token", JSON.parse(responseBody).token);
+}

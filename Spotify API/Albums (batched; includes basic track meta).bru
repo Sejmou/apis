@@ -1,0 +1,33 @@
+meta {
+  name: Albums (batched; includes basic track meta)
+  type: http
+  seq: 9
+}
+
+get {
+  url: https://api.spotify.com/v1/albums?ids={{album_ids}}
+  body: none
+  auth: bearer
+}
+
+params:query {
+  ids: {{album_ids}}
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:pre-request {
+  const ids = [
+    /**"1gjugH97doz3HktiEjx2vY",
+    "0gsiszk6JWYwAyGvaTTud4",
+    "",*/
+    // example w/ more than 50 songs - requires pagination for tracks!
+    "1Hnvk7i2oLf4ZQnOB8kYqt"
+  ]
+  // max: 20 IDs
+  
+  const idsQueryParam = ids.join(',')
+  bru.setVar('album_ids', idsQueryParam)
+}

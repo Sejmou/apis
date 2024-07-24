@@ -1,0 +1,35 @@
+meta {
+  name: Daily Top Songs Global
+  type: http
+  seq: 1
+}
+
+get {
+  url: https://charts-spotify-com-service.spotify.com/auth/v0/charts/regional-global-daily/2024-06-02
+  body: none
+  auth: none
+}
+
+headers {
+  accept: application/json
+  accept-language: en-US,en;q=0.9
+  app-platform: Browser
+  authorization: Bearer BQBu7RDIhozNAQ_sDZ698yoDzwDwRj-kuDcl-IXG5uZ6k8fY_qn08NrXhRyD_UmCX31fnaSXu_pFp4llwlU1KM3UGGoszRr45MkdsV474M9mi9S1mQKE3lUYfqt3aU4FRW0foI1EG7GuqPyiXF7Mq2UjTJnApzXjCi7eh-BQw2t44MNNrLGnnPgprCVxMrVnaF8loDXcAVMwCs-ussJBGoYI
+  content-type: application/json
+  origin: https://charts.spotify.com
+  priority: u=1, i
+  referer: https://charts.spotify.com/
+  sec-ch-ua: "Chromium";v="125", "Not.A/Brand";v="24"
+  sec-ch-ua-mobile: ?0
+  sec-ch-ua-platform: "macOS"
+  sec-fetch-dest: empty
+  sec-fetch-mode: cors
+  sec-fetch-site: same-site
+  spotify-app-version: 0.0.0.production
+  user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36
+}
+
+script:pre-request {
+  const reqHeaders = bru.getEnvVar('request_headers')
+  req.setHeaders(JSON.parse(reqHeaders))
+}

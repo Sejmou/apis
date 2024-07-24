@@ -1,0 +1,30 @@
+meta {
+  name: [INVALID IDs] Track Audio Features (batched)
+  type: http
+  seq: 3
+}
+
+get {
+  url: https://api.spotify.com/v1/audio-features?ids={{track_ids}}
+  body: none
+  auth: bearer
+}
+
+query {
+  ids: {{track_ids}}
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:pre-request {
+  const ids = [
+    "asdf",
+    undefined,
+    123
+  ]
+  
+  const idsQueryParam = ids.join(',')
+  bru.setVar('track_ids', idsQueryParam)
+}

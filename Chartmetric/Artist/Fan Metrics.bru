@@ -1,0 +1,37 @@
+meta {
+  name: Fan Metrics
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{api_url}}/artist/{{cm_artist_id}}/stat/{{source}}?since={{since}}&until={{until}}
+  body: none
+  auth: bearer
+}
+
+query {
+  since: {{since}}
+  until: {{until}}
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+vars:pre-request {
+  source: spotify
+  since: 2021-01-01
+  until: 2021-01-31
+}
+
+docs {
+  [Official Docs](https://api.chartmetric.com/apidoc/#api-Artist-GetArtistorStat)
+  
+  Endpoint: `/artist/:id/stat/:source`
+  
+  supported values for source (selection, check docs for details):
+  - spotify
+  - wikipedia
+  - instagram
+}

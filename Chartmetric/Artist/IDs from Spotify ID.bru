@@ -1,0 +1,15 @@
+meta {
+  name: IDs from Spotify ID
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{api_url}}/artist/spotify/{{spotify_artist_id}}/get-ids?aggregate=true
+  body: none
+  auth: none
+}
+
+query {
+  aggregate: true
+}

@@ -1,0 +1,37 @@
+meta {
+  name: Artists (batched)
+  type: http
+  seq: 7
+}
+
+get {
+  url: https://api.spotify.com/v1/artists?ids={{artist_ids}}
+  body: none
+  auth: bearer
+}
+
+query {
+  ids: {{artist_ids}}
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:pre-request {
+  const ids = [
+    "06HL4z0CvFAxyc27GXpf02",
+    "4q3ewBCX7sLwd24euuV69X",
+    "06HL4z0CvFAxyc27GXpf02",
+    "06HL4z0CvFAxyc27GXpf02",
+    "06HL4z0CvFAxyc27GXpf02",
+    "3TVXtAsR1Inumwj472S9r4",
+    "1Xyo4u8uXC1ZmMpatF05PJ",
+    "3TVXtAsR1Inumwj472S9r4",
+    "7tYKF4w9nC0nq9CsPZTHyP",
+    "3TVXtAsR1Inumwj472S9r4",
+  ]
+  
+  const idsQueryParam = ids.join(',')
+  bru.setVar('artist_ids', idsQueryParam)
+}

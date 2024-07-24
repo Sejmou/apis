@@ -1,0 +1,15 @@
+meta {
+  name: Related artists
+  type: http
+  seq: 10
+}
+
+get {
+  url: https://api.spotify.com/v1/artists/0TnOYISbd1XYRBk9myaseg/related-artists
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

@@ -1,0 +1,18 @@
+meta {
+  name: TikTok weekly top tracks US
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_url}}/charts/tiktok/tracks?date=2024-07-07&interval=weekly&countryChart=true&code2=US
+  body: none
+  auth: none
+}
+
+query {
+  date: 2024-07-07
+  interval: weekly
+  countryChart: true
+  code2: US
+}

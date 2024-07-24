@@ -1,0 +1,38 @@
+meta {
+  name: Search
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/search?type={{type}}&q={{q}}
+  body: none
+  auth: none
+}
+
+query {
+  type: {{type}}
+  q: {{q}}
+}
+
+vars:pre-request {
+  type: artists
+  q: Taylor Swift
+}
+
+docs {
+  [Official Docs](https://api.chartmetric.com/apidoc/#api-Search-Search)
+  
+  Endpoint: `/search`
+  
+  Possible values for `type` query parameter:
+  - all
+  - artists
+  - track
+  - playlists
+  - curators
+  - albums
+  - stations
+  - cities
+  - songwriters
+}

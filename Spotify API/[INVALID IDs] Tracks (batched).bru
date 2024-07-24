@@ -1,0 +1,30 @@
+meta {
+  name: [INVALID IDs] Tracks (batched)
+  type: http
+  seq: 5
+}
+
+get {
+  url: https://api.spotify.com/v1/tracks?ids={{track_ids}}
+  body: none
+  auth: bearer
+}
+
+query {
+  ids: {{track_ids}}
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:pre-request {
+  const ids = [
+    "asdf",
+    undefined,
+    123
+  ]
+  
+  const idsQueryParam = ids.join(',')
+  bru.setVar('track_ids', idsQueryParam)
+}

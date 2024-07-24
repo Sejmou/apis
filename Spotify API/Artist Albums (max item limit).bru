@@ -1,0 +1,37 @@
+meta {
+  name: Artist Albums (max item limit)
+  type: http
+  seq: 8
+}
+
+get {
+  url: https://api.spotify.com/v1/artists/{{artist_id}}/albums?limit=50
+  body: none
+  auth: bearer
+}
+
+query {
+  limit: 50
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
+
+script:pre-request {
+  const ids = [
+    "06HL4z0CvFAxyc27GXpf02",
+    "4q3ewBCX7sLwd24euuV69X",
+    "06HL4z0CvFAxyc27GXpf02",
+    "06HL4z0CvFAxyc27GXpf02",
+    "06HL4z0CvFAxyc27GXpf02",
+    "3TVXtAsR1Inumwj472S9r4",
+    "1Xyo4u8uXC1ZmMpatF05PJ",
+    "3TVXtAsR1Inumwj472S9r4",
+    "7tYKF4w9nC0nq9CsPZTHyP",
+    "3TVXtAsR1Inumwj472S9r4",
+  ]
+  
+  const idsQueryParam = ids.join(',')
+  bru.setVar('artist_ids', idsQueryParam)
+}

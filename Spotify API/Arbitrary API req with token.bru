@@ -1,0 +1,20 @@
+meta {
+  name: Arbitrary API req with token
+  type: http
+  seq: 12
+}
+
+get {
+  url: https://api.spotify.com/v1/albums/1Hnvk7i2oLf4ZQnOB8kYqt/tracks?offset=100&limit=50
+  body: none
+  auth: bearer
+}
+
+params:query {
+  offset: 100
+  limit: 50
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

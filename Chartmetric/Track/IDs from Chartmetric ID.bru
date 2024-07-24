@@ -1,0 +1,15 @@
+meta {
+  name: IDs from Chartmetric ID
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/track/chartmetric/{{cm_track_id}}/get-ids
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  platform: spotify
+}

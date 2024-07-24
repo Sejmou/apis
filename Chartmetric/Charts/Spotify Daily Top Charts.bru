@@ -1,0 +1,22 @@
+meta {
+  name: Spotify Daily Top Charts
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{api_url}}/charts/spotify?country_code=US&interval=daily&type=regional&date=2023-01-01
+  body: none
+  auth: bearer
+}
+
+query {
+  country_code: US
+  interval: daily
+  type: regional
+  date: 2023-01-01
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

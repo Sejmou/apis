@@ -1,0 +1,15 @@
+meta {
+  name: IDs from ISRC
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{api_url}}/track/isrc/{{isrc}}/get-ids
+  body: none
+  auth: inherit
+}
+
+vars:pre-request {
+  platform: spotify
+}

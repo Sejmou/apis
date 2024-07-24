@@ -1,0 +1,15 @@
+meta {
+  name: Chart Countries
+  type: http
+  seq: 2
+}
+
+get {
+  url: {{api_url}}/charts/{{platform}}/countries
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{access_token}}
+}
