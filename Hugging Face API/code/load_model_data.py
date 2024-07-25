@@ -1,6 +1,7 @@
 from huggingface_hub.hf_api import ModelInfo, ExpandModelProperty_T
 from tqdm import tqdm
 from huggingface_hub import HfApi, file_exists, hf_hub_download
+from huggingface_hub.utils._errors import GatedRepoError
 from typing import List, Set
 import json
 import numpy as np
@@ -190,6 +191,10 @@ def download_config_file(
         with open(MODEL_CONFIGS_FILE, "a") as f:
             f.write(safe_convert_to_json(config) + "\n")
             model_ids_with_configs.add(model_id)
+    except GatedRepoError as e:
+        with open(ACCESS_RESTRICTED_MODELS_FILE, "a") as err_f:
+            err_f.write(model_id + "\n")
+            access_restricted_model_ids.add(model_id)
     except HTTPError as e:
         if e.response.status_code == 401:
             with open(ACCESS_RESTRICTED_MODELS_FILE, "a") as err_f:
