@@ -1,1 +1,8 @@
 huggingface_hub
+ipykernel
+ipywidgets
+duckdb
+jupysql
+pandas
+matplotlib
+duckdb-engine
