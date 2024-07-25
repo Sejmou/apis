@@ -1,7 +1,7 @@
 from huggingface_hub.hf_api import ModelInfo, ExpandModelProperty_T
 from tqdm import tqdm
 from huggingface_hub import HfApi, file_exists, hf_hub_download
-from typing import List
+from typing import List, Set
 import json
 import numpy as np
 from datetime import datetime, date
@@ -37,7 +37,7 @@ nlp_category_filters = [
 
 # need to specify all additional fields we want to fetch by passing them in the `expand` parameter
 # see also: https://huggingface.co/docs/huggingface_hub/v0.24.2/en/package_reference/hf_api#huggingface_hub.hf_api.ModelInfo:~:text=to%20False.-,expand,-(List%5BExpandModelProperty_T
-expand_params: List[ExpandModelProperty_T] = [
+EXPAND_PARAMS: List[ExpandModelProperty_T] = [
     "author",
     "cardData",
     "config",
@@ -63,10 +63,20 @@ expand_params: List[ExpandModelProperty_T] = [
     "widgetData",
 ]
 
+def get_missing_model_ids():
+    if os.path.exists(MODEL_ID_FILE):
+        print(f"Reading model IDs from {MODEL_ID_FILE}")
+        with open(MODEL_ID_FILE, "r") as f:
+            model_ids = [line.strip() for line in f.readlines() if line.strip()]
+    else:
+        model_ids = download_relevant_model_ids()
+        write_to_file(model_ids, MODEL_ID_FILE)
 
-def get_matching_model_ids(filters: List[str]) -> List[str]:
+    return model_ids
+
+def download_relevant_model_ids() -> List[str]:
     models_found: List[ModelInfo] = []
-    for cat_filter in tqdm(filters, desc="Filter"):
+    for cat_filter in tqdm(nlp_category_filters, desc="Fetching models with at least one like for each category"):
         returned_models = api.list_models(filter=cat_filter, sort="likes")
         models_matching_criteria: List[ModelInfo] = []
         for model in returned_models:
@@ -120,31 +130,38 @@ def safe_convert_to_json(data: dict):
 
 
 def download_model_data(
-    model_ids: List[str], expand_params: List[ExpandModelProperty_T]
+    model_ids: List[str], expand_params: List[ExpandModelProperty_T] = EXPAND_PARAMS
 ):
+    print(f"Got {len(model_ids)} model IDs")
+    
     already_loaded_ids = set()
     if os.path.exists(MODELS_FILE):
+        print(f"Reading already loaded model IDs from {MODELS_FILE}")
         with open(MODELS_FILE, "r") as f:
             already_loaded_ids = set([json.loads(line)["id"] for line in f.readlines()])
+            print(f"Already loaded data for {len(already_loaded_ids)} models")
 
     access_restricted_model_ids = set()
     if os.path.exists(ACCESS_RESTRICTED_MODELS_FILE):
+        print(f"Reading access restricted model IDs from {ACCESS_RESTRICTED_MODELS_FILE}")
         with open(ACCESS_RESTRICTED_MODELS_FILE, "r") as f:
             access_restricted_model_ids = set([line.strip() for line in f.readlines()])
+            print(f"Found {len(access_restricted_model_ids)} models that are access restricted")
 
-    ids_to_check = set(model_ids) - already_loaded_ids - access_restricted_model_ids
+    ids_to_download = set(model_ids) - already_loaded_ids - access_restricted_model_ids
+    print(f"{len(ids_to_download)} models left to download")
 
     with open(MODELS_FILE, "a") as f:
-        for id_to_check in tqdm(ids_to_check):
+        for model_id in tqdm(ids_to_download):
             try:
-                model = api.model_info(id_to_check, expand=expand_params)
+                model = api.model_info(model_id, expand=expand_params)
                 model_dict = asdict(model)
                 model_dict["observed_at"] = get_current_timestamp_str()
                 f.write(safe_convert_to_json(model_dict) + "\n")
             except HTTPError as e:
                 if e.response.status_code == 401:
                     with open(ACCESS_RESTRICTED_MODELS_FILE, "a") as err_f:
-                        err_f.write(id_to_check + "\n")
+                        err_f.write(model_id + "\n")
                     continue
                 else:
                     raise
@@ -174,32 +191,36 @@ def download_config_file(
         model_ids_with_configs.add(model_id)
 
 
-def download_missing_model_configs(model_ids: List[str]):
+def download_missing_model_configs(model_ids: Set[str]):
     model_ids_with_config = set()
     if os.path.exists(MODEL_CONFIGS_FILE):
+        print(f"Reading model IDs with config from {MODEL_CONFIGS_FILE}")
         with open(MODEL_CONFIGS_FILE, "r") as f:
             model_ids_with_config = set(
                 [json.loads(line)["model_id"] for line in f.readlines()]
             )
+            print(f"Already loaded config data for {len(model_ids_with_config)} models")
 
     model_ids_without_config = set()
     if os.path.exists(MODEL_IDS_WO_CONFIG_FILE):
+        print(f"Reading model IDs without config from {MODEL_IDS_WO_CONFIG_FILE}")
         with open(MODEL_IDS_WO_CONFIG_FILE, "r") as f:
             model_ids_without_config = set([line.strip() for line in f.readlines()])
-
-    downloaded_model_ids = set()
-    if os.path.exists(MODELS_FILE):
-        with open(MODELS_FILE, "r") as f:
-            downloaded_model_ids = set(
-                [json.loads(line)["id"] for line in f.readlines()]
-            )
+            print(f"Found {len(model_ids_without_config)} models without config data")
 
     model_ids_to_fetch_config_for = (
-        downloaded_model_ids - model_ids_with_config - model_ids_without_config
+        model_ids - model_ids_with_config - model_ids_without_config
     )
+    print(f"{len(model_ids_to_fetch_config_for)} models left to fetch config for")
+
     for model_id in tqdm(model_ids_to_fetch_config_for):
         download_config_file(
             model_id,
             model_ids_with_configs=model_ids_with_config,
             model_ids_without_config=model_ids_without_config,
         )
+
+if __name__ == "__main__":
+    model_ids = get_missing_model_ids()
+    download_model_data(model_ids, EXPAND_PARAMS)
+    download_missing_model_configs(set(model_ids))
