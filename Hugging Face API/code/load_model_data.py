@@ -168,7 +168,7 @@ def download_model_data(
 
 
 def download_config_file(
-    model_id: str, model_ids_with_configs: set, model_ids_without_config: set
+    model_id: str, model_ids_with_configs: set, model_ids_without_config: set, access_restricted_model_ids: set
 ):
     if not file_exists(model_id, "config.json"):
         print(f"Config file for model {model_id} does not exist")
@@ -176,19 +176,27 @@ def download_config_file(
             f.write(model_id + "\n")
         model_ids_without_config.add(model_id)
         return
-    if model_id in model_ids_with_configs:
+    if model_id in model_ids_with_configs or model_id in access_restricted_model_ids:
         return
     tmp_dir = os.path.join(data_dir, "tmp")
-    hf_hub_download(model_id, "config.json", local_dir=tmp_dir, force_download=True)
-    downloaded_path = os.path.abspath(os.path.join(tmp_dir, "config.json"))
-    with open(downloaded_path, "r") as f:
-        config = json.load(f)
-        if "model_id" in config:
-            raise ValueError("The config file already contains a 'model_id' field")
-        config["model_id"] = model_id
-    with open(MODEL_CONFIGS_FILE, "a") as f:
-        f.write(safe_convert_to_json(config) + "\n")
-        model_ids_with_configs.add(model_id)
+    try: 
+        hf_hub_download(model_id, "config.json", local_dir=tmp_dir, force_download=True)
+        downloaded_path = os.path.abspath(os.path.join(tmp_dir, "config.json"))
+        with open(downloaded_path, "r") as f:
+            config = json.load(f)
+            if "model_id" in config:
+                raise ValueError("The config file already contains a 'model_id' field")
+            config["model_id"] = model_id
+        with open(MODEL_CONFIGS_FILE, "a") as f:
+            f.write(safe_convert_to_json(config) + "\n")
+            model_ids_with_configs.add(model_id)
+    except HTTPError as e:
+        if e.response.status_code == 401:
+            with open(ACCESS_RESTRICTED_MODELS_FILE, "a") as err_f:
+                err_f.write(model_id + "\n")
+                access_restricted_model_ids.add(model_id)
+        else:
+            raise
 
 
 def download_missing_model_configs(model_ids: Set[str]):
@@ -208,8 +216,15 @@ def download_missing_model_configs(model_ids: Set[str]):
             model_ids_without_config = set([line.strip() for line in f.readlines()])
             print(f"Found {len(model_ids_without_config)} models without config data")
 
+    access_restricted_model_ids = set()
+    if os.path.exists(ACCESS_RESTRICTED_MODELS_FILE):
+        print(f"Reading access restricted model IDs from {ACCESS_RESTRICTED_MODELS_FILE}")
+        with open(ACCESS_RESTRICTED_MODELS_FILE, "r") as f:
+            access_restricted_model_ids = set([line.strip() for line in f.readlines()])
+            print(f"Found {len(access_restricted_model_ids)} models that are access restricted")
+
     model_ids_to_fetch_config_for = (
-        model_ids - model_ids_with_config - model_ids_without_config
+        model_ids - model_ids_with_config - model_ids_without_config - access_restricted_model_ids
     )
     print(f"{len(model_ids_to_fetch_config_for)} models left to fetch config for")
 
@@ -218,6 +233,7 @@ def download_missing_model_configs(model_ids: Set[str]):
             model_id,
             model_ids_with_configs=model_ids_with_config,
             model_ids_without_config=model_ids_without_config,
+            access_restricted_model_ids=access_restricted_model_ids,
         )
 
 if __name__ == "__main__":
