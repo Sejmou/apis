@@ -20,6 +20,7 @@ MODELS_FILE = os.path.join(data_dir, "models.jsonl")
 ACCESS_RESTRICTED_MODELS_FILE = os.path.join(data_dir, "access_restricted_models.txt")
 MODEL_CONFIGS_FILE = os.path.join(data_dir, "model_configs.jsonl")
 MODEL_IDS_WO_CONFIG_FILE = os.path.join(data_dir, "models_without_config.txt")
+MODEL_IDS_WITH_CONFIG_FETCHING_ERRORS_FILE = os.path.join(data_dir, "models_with_config_fetching_errors.txt")
 
 nlp_category_filters = [
     "text-classification",
@@ -202,6 +203,10 @@ def download_config_file(
                 access_restricted_model_ids.add(model_id)
         else:
             raise
+    except Exception as e:
+        print(f"Unknown error fetching config for model {model_id}: {e}")
+        with open(MODEL_IDS_WITH_CONFIG_FETCHING_ERRORS_FILE, "a") as err_f:
+            err_f.write(model_id + "\n")
 
 
 def download_missing_model_configs(model_ids: Set[str]):
