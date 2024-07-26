@@ -204,7 +204,7 @@ def download_config_file(
             err_f.write(model_id + "\n")
             access_restricted_model_ids.add(model_id)
     except HTTPError as e:
-        if e.response.status_code == 401:
+        if e.response.status_code == 401 or e.response.status_code == 403:
             with open(ACCESS_RESTRICTED_MODELS_FILE, "a") as err_f:
                 err_f.write(model_id + "\n")
                 access_restricted_model_ids.add(model_id)
