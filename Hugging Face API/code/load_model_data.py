@@ -172,7 +172,14 @@ def download_model_data(
 def download_config_file(
     model_id: str, model_ids_with_configs: set, model_ids_without_config: set, access_restricted_model_ids: set
 ):
-    if not file_exists(model_id, "config.json"):
+    try:
+        config_exists = file_exists(model_id, "config.json")
+    except GatedRepoError as e:
+        with open(ACCESS_RESTRICTED_MODELS_FILE, "a") as err_f:
+            err_f.write(model_id + "\n")
+        access_restricted_model_ids.add(model_id)
+        return
+    if not config_exists:
         print(f"Config file for model {model_id} does not exist")
         with open(MODEL_IDS_WO_CONFIG_FILE, "a") as f:
             f.write(model_id + "\n")
