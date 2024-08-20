@@ -1,0 +1,4 @@
+script:pre-request {
+  req.headers['x-api-key'] = bru.getEnvVar('api_key')
+  req.headers['x-app-id'] = bru.getEnvVar('app_id')
+}

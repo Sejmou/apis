@@ -1,0 +1,22 @@
+meta {
+  name: ISRC tracks (DE) search
+  type: http
+  seq: 17
+}
+
+get {
+  url: https://api.spotify.com/v1/search?query=isrc:USSM12105970&type=track&limit=50&market=DE
+  body: none
+  auth: bearer
+}
+
+params:query {
+  query: isrc:USSM12105970
+  type: track
+  limit: 50
+  market: DE
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

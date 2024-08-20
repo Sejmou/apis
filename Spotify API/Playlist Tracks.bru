@@ -1,0 +1,20 @@
+meta {
+  name: Playlist Tracks
+  type: http
+  seq: 14
+}
+
+get {
+  url: https://api.spotify.com/v1/playlists/69fEt9DN5r4JQATi52sRtq/tracks?offset=3300&limit=100
+  body: none
+  auth: bearer
+}
+
+params:query {
+  offset: 3300
+  limit: 100
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

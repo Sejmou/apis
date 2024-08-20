@@ -1,0 +1,22 @@
+meta {
+  name: Text tracks search
+  type: http
+  seq: 16
+}
+
+get {
+  url: https://api.spotify.com/v1/search?query=Hello&type=track&limit=50&offset=50
+  body: none
+  auth: bearer
+}
+
+params:query {
+  query: Hello
+  type: track
+  limit: 50
+  offset: 50
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

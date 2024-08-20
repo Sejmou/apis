@@ -1,0 +1,69 @@
+meta {
+  name: Formatted message (incoming webhook)
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{webhook_url}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-type: application/json
+}
+
+body:json {
+  {"text":"Task completed!"}
+}
+
+script:pre-request {
+  const scraperIP = '127.0.0.1';
+  
+  const state = {
+    taskId: 420,
+    taskName: 'fetching tracks',
+    successes: 69,
+    unprocessedIds: ['g', 'h', 'i'],
+    idsWithError: ['a', 'b', 'c'],
+    idsWithoutOutput: ['d', 'e', 'f'],
+  };
+  
+  const header = `${state.taskName} [${state.taskId}] on ${scraperIP} finished`;
+  
+  const createIdListStr = ids =>
+    '[ ' + ids.map(id => `"${id}"`).join(', ') + ' ]';
+  
+  const wrapInCodeBlock = str => `\`\`\`\n${str}\n\`\`\``;
+  
+  const content = `
+  *${state.successes} successes*
+  
+  *${state.unprocessedIds.length} IDs left to process:*
+  ${wrapInCodeBlock(createIdListStr(state.unprocessedIds))}
+  
+  *${state.idsWithError.length} IDs with error:*
+  ${wrapInCodeBlock(createIdListStr(state.idsWithError))}
+  
+  *${state.idsWithoutOutput.length} IDs without output:*
+  ${wrapInCodeBlock(createIdListStr(state.idsWithoutOutput))}`;
+  
+  req.body.blocks = [
+    {
+      type: 'header',
+      text: {
+        type: 'plain_text',
+        text: header,
+      },
+    },
+    {
+      type: 'section',
+      text: {
+        type: 'mrkdwn',
+        text: content,
+      },
+    },
+  ];
+  
+}

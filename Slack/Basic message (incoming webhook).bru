@@ -1,0 +1,19 @@
+meta {
+  name: Basic message (incoming webhook)
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{webhook_url}}
+  body: json
+  auth: none
+}
+
+headers {
+  Content-type: application/json
+}
+
+body:json {
+  {"text":"Hello, World!"}
+}
