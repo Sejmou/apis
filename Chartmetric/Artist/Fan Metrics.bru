@@ -5,14 +5,14 @@ meta {
 }
 
 get {
-  url: {{api_url}}/artist/{{cm_artist_id}}/stat/{{source}}?since={{since}}&until={{until}}
+  url: {{api_url}}/artist/{{cm_artist_id}}/stat/{{source}}?since=2023-12-01&until=2023-12-31
   body: none
   auth: bearer
 }
 
-query {
-  since: {{since}}
-  until: {{until}}
+params:query {
+  since: 2023-12-01
+  until: 2023-12-31
 }
 
 auth:bearer {
@@ -23,6 +23,11 @@ vars:pre-request {
   source: spotify
   since: 2021-01-01
   until: 2021-01-31
+}
+
+script:pre-request {
+  //bru.setVar('source','spotify');
+  bru.setVar('source','wikipedia');
 }
 
 docs {

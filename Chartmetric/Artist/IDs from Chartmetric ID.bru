@@ -7,9 +7,13 @@ meta {
 get {
   url: {{api_url}}/artist/chartmetric/{{cm_track_id}}/get-ids?aggregate=true
   body: none
-  auth: none
+  auth: bearer
 }
 
-query {
+params:query {
   aggregate: true
+}
+
+auth:bearer {
+  token: {{access_token}}
 }

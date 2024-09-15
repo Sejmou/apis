@@ -1,0 +1,19 @@
+meta {
+  name: Track with region
+  type: http
+  seq: 18
+}
+
+get {
+  url: https://api.spotify.com/v1/tracks/09LVrxDQiXfyR7nvBC7Op1?region=DE
+  body: none
+  auth: bearer
+}
+
+params:query {
+  region: DE
+}
+
+auth:bearer {
+  token: {{access_token}}
+}

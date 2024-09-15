@@ -1,0 +1,16 @@
+meta {
+  name: Artist monthly Spotify listeners
+  type: http
+  seq: 5
+}
+
+get {
+  url: {{api_url}}/v2/artist/11e81bcc-9c1c-ce38-b96b-a0369fe50396/streaming/spotify/listening?endDate=2023-12-31&startDate=2023-10-02
+  body: none
+  auth: none
+}
+
+params:query {
+  endDate: 2023-12-31
+  startDate: 2023-10-02
+}

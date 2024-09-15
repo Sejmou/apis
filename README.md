@@ -1,5 +1,5 @@
-# API docs
-This repository contains a collection of useful stuff that helps you get started with APIs and data sources used at WU RDS. This includes:
+# APIs
+This is a repository for various APIs. It includes:
  - [bruno](https://www.usebruno.com/) collections that allow you to quickly test and explore APIs used for various projects at WU RDS. Just import the collection(s) you need into your bruno client and get started!
  - code snippets and examples
 
